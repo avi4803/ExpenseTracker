@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Expense Tracker</h1>
+    
+    <h2>Add New Expense</h2>
+    <form action="/add" method="POST">
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <input type="text" name="category" placeholder="Category" required>
+        <button type="submit">Add Expense</button>
+    </form>
+
+    <h2>Currency Selection</h2>
+    <form action="/" method="GET">
+        <select name="currency" onchange="this.form.submit()">
+            <option value="INR" {% if currency == 'INR' %}selected{% endif %}>INR (₹)</option>
+            <option value="USD" {% if currency == 'USD' %}selected{% endif %}>USD ($)</option>
+            <option value="EUR" {% if currency == 'EUR' %}selected{% endif %}>EUR (€)</option>
+        </select>
+    </form>
+
+    <h2>All Expenses</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense[0] }}</td>
+                <td>{{ expense[1] }}</td>
+                <td>{{ currency_symbol }}{{ expense[2] }}</td>
+                <td>{{ expense[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Total Expenses: {{ currency_symbol }}{{ total }}</h2>
+
+    <h2>Monthly Summary</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for month, total in monthly_summary.items() %}
+            <tr>
+                <td>{{ month }}</td>
+                <td>{{ currency_symbol }}{{ total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Download Expenses</h2>
+    <form action="/download" method="GET">
+        <label for="days">Select number of days:</label>
+        <select name="days" id="days">
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+        </select>
+        <br>
+        <label for="format">Select download format:</label>
+        <select name="format" id="format">
+            <option value="pdf">PDF</option>
+            <option value="csv">CSV</option>
+        </select>
+        <br>
+        <button type="submit">Download</button>
+    </form>
+</div>
+
+</body>
+</html>
